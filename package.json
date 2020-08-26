@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "chromecast-api": "^0.3.4"
+  }
+}
