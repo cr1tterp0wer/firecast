@@ -9,6 +9,7 @@ const server = express();
 const ChromecastAPI = require('chromecast-api');
 const client = new ChromecastAPI();
 const app = express();
+app.use(express.json());
 
 /**
  * POST: /play
@@ -17,6 +18,48 @@ const app = express();
  * @params {Object} res - response to client
  */
 app.post('/play', (req, res) => {
+	const device = client.devices[0];
+	const params = req.body;
+
+	if (params.url) {
+		device.play(params.url, function(err) {
+			if (err) console.log(err);
+		});
+	}
+
+	res.status(200).send('Success');
+});
+
+/**
+ * POST: /stop
+ * Stop current media
+ */
+app.post('/stop', (req, res) => {
+	const device = client.devices[0];
+
+	device.stop();
+	res.status(200).send('Success');
+});
+
+/**
+ * POST: /pause
+ * Pause current media
+ */
+app.post('/pause', (req, res) => {
+	const device = client.devices[0];
+
+	device.pause();
+	res.status(200).send('Success');
+});
+
+/**
+ * POST: /resume
+ * Resume current media
+ */
+app.post('/resume', (req, res) => {
+	const device = client.devices[0];
+
+	device.resume();
 	res.status(200).send('Success');
 });
 
