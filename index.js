@@ -1,6 +1,11 @@
 /**
- * REST API to forward chromecast commands
+ * HTTP API to forward chromecast commands
+ * within a local Network
+ *
  * Christopher Apodaca
+ * Sept. 12, 2020
+ * https://www.christopher-apodaca.com
+ * MIT License
  */
 
 const express = require('express');
@@ -38,6 +43,8 @@ app.post('/play', (req, res) => {
 /**
  * POST: /stop
  * Stop current media
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
  */
 app.post('/stop', (req, res) => {
 	DEVICE.stop();
@@ -47,7 +54,9 @@ app.post('/stop', (req, res) => {
 /**
  * POST: /pause
  * Pause current media
- */
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
+*/
 app.post('/pause', (req, res) => {
 	DEVICE.pause();
 	res.status(200).send('Success');
@@ -56,7 +65,9 @@ app.post('/pause', (req, res) => {
 /**
  * POST: /resume
  * Resume current media
- */
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
+*/
 app.post('/resume', (req, res) => {
 	DEVICE.resume();
 	res.status(200).send('Success');
@@ -65,7 +76,9 @@ app.post('/resume', (req, res) => {
 /**
  * GET: /status
  * Stop current media
- */
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
+*/
 app.get('/status', (req, res) => {
 	res.status(200).send(STATUS);
 });
@@ -75,7 +88,9 @@ app.get('/status', (req, res) => {
  * Trigger the mDNS and SSDP search again.
  * Warning: the device event will trigger again
  * (it might return the same device).
- */
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
+*/
 app.post('/update', (req, res) => {
 	client.update();
 	res.status(200).send('Success: ' + JSON.stringify(client.devices));
@@ -84,7 +99,9 @@ app.post('/update', (req, res) => {
 /**
  * POST: /close
  * Close the connection with the device.
- */
+ * @params {Object} req - request from client
+ * @params {Object} res - response to client
+*/
 app.post('/close', (req, res) => {
 	DEVICE.close();
 	res.status(200).send('Success');
@@ -113,10 +130,10 @@ client.on('device', function (device) {
 	DEVICE = device;
 	console.log('Found chromecast: `' + DEVICE.friendlyName + '` at ' + DEVICE.host)
 
-/**
- * Event emitted when the client is
- * connected to the device.
- */
+	/**
+	 * Event emitted when the client is
+	 * connected to the device.
+	 */
 	DEVICE.on('connected', function(stats) {
 		STATUS = stats;
 		console.log(STATUS);
