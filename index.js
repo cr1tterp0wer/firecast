@@ -37,7 +37,7 @@ app.post('/play', (req, res) => {
 		});
 	}
 
-	res.status(200).send('Success');
+	res.status(200).send(STATUS);
 });
 
 /**
@@ -48,7 +48,7 @@ app.post('/play', (req, res) => {
  */
 app.post('/stop', (req, res) => {
 	DEVICE.stop();
-	res.status(200).send('Success');
+	res.status(200).send(STATUS);
 });
 
 /**
@@ -59,7 +59,7 @@ app.post('/stop', (req, res) => {
 */
 app.post('/pause', (req, res) => {
 	DEVICE.pause();
-	res.status(200).send('Success');
+	res.status(200).send(STATUS);
 });
 
 /**
@@ -70,7 +70,7 @@ app.post('/pause', (req, res) => {
 */
 app.post('/resume', (req, res) => {
 	DEVICE.resume();
-	res.status(200).send('Success');
+	res.status(200).send(STATUS);
 });
 
 /**
@@ -104,7 +104,7 @@ app.post('/update', (req, res) => {
 */
 app.post('/close', (req, res) => {
 	DEVICE.close();
-	res.status(200).send('Success');
+	res.status(200).send(STATUS);
 });
 
 /**
