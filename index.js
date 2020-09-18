@@ -9,7 +9,12 @@ const server = express();
 const ChromecastAPI = require('chromecast-api');
 const client = new ChromecastAPI();
 const app = express();
-app.use(express.json());
+app.use(function() {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+	express.json()
+});
 
 let DEVICE;
 let STATUS;
