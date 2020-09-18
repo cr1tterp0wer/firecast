@@ -1,0 +1,20 @@
+{
+	"manifest_version": 2,
+	"name": "Firecast",
+	"version": "1.0",
+	"author": "Christopher Apodaca",
+	"description": "Youtube cc support",
+	"background": {
+		"scripts": [
+			"jquery.min.js",
+			"index.js"
+		]
+	},
+	"browser_action": {
+		"default_icon": {
+			"16": "icons/icon.png",
+			"32": "icons/icon.png"
+		}
+	},
+	"permissions": ["tabs"]
+}

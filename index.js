@@ -11,6 +11,9 @@ const client = new ChromecastAPI();
 const app = express();
 app.use(express.json());
 
+let DEVICE;
+let STATUS;
+
 /**
  * POST: /play
  * Play media from url: req.body.mediaURL
@@ -18,11 +21,10 @@ app.use(express.json());
  * @params {Object} res - response to client
  */
 app.post('/play', (req, res) => {
-	const device = client.devices[0];
 	const params = req.body;
 
 	if (params.url) {
-		device.play(params.url, function(err) {
+		DEVICE.play(params.url, function(err) {
 			if (err) console.log(err);
 		});
 	}
@@ -35,9 +37,7 @@ app.post('/play', (req, res) => {
  * Stop current media
  */
 app.post('/stop', (req, res) => {
-	const device = client.devices[0];
-
-	device.stop();
+	DEVICE.stop();
 	res.status(200).send('Success');
 });
 
@@ -46,9 +46,7 @@ app.post('/stop', (req, res) => {
  * Pause current media
  */
 app.post('/pause', (req, res) => {
-	const device = client.devices[0];
-
-	device.pause();
+	DEVICE.pause();
 	res.status(200).send('Success');
 });
 
@@ -57,9 +55,35 @@ app.post('/pause', (req, res) => {
  * Resume current media
  */
 app.post('/resume', (req, res) => {
-	const device = client.devices[0];
+	DEVICE.resume();
+	res.status(200).send('Success');
+});
 
-	device.resume();
+/**
+ * GET: /status
+ * Stop current media
+ */
+app.get('/status', (req, res) => {
+	res.status(200).send(STATUS);
+});
+
+/**
+ * POST: /update
+ * Trigger the mDNS and SSDP search again.
+ * Warning: the device event will trigger again
+ * (it might return the same device).
+ */
+app.post('/update', (req, res) => {
+	client.update();
+	res.status(200).send('Success: ' + JSON.stringify(client.devices));
+});
+
+/**
+ * POST: /close
+ * Close the connection with the device.
+ */
+app.post('/close', (req, res) => {
+	DEVICE.close();
 	res.status(200).send('Success');
 });
 
@@ -70,9 +94,38 @@ app.post('/resume', (req, res) => {
  * @params {Object} res - response to client
  */
 app.get('/', (req, res) => {
-	res.status(200).send('Success');
+	res.status(200).send('Success: Firecast up on ' + PORT + '!');
 });
 
+// Start the server
 app.listen(PORT, () => {
 	console.log('Firecast up on ' + PORT + '!');
+});
+
+/**
+ * Setup Event Listeners
+ * Store Global DEVICE.STATUS
+ */
+client.on('device', function (device) {
+	DEVICE = device;
+	console.log('Found chromecast: `' + DEVICE.friendlyName + '` at ' + DEVICE.host)
+
+/**
+ * Event emitted when the client is
+ * connected to the device.
+ */
+	DEVICE.on('connected', function(stats) {
+		STATUS = stats;
+		console.log(STATUS);
+	});
+
+/**
+ * Event emitted when the device
+ * has a new status: callback(status).
+ */
+	DEVICE.on('status', function(stats) {
+		STATUS = stats;
+		console.log(STATUS);
+	});
+
 });
