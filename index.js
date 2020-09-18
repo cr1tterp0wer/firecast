@@ -28,16 +28,22 @@ let STATUS;
  * @params {Object} req - request from client
  * @params {Object} res - response to client
  */
-app.post('/play', (req, res) => {
+app.post('/play', async (req, res) => {
 	const params = req.body;
 
-	if (params.url) {
-		DEVICE.play(params.url, function(err) {
-			if (err) console.log(err);
-		});
-	}
+	DEVICE.play(params.url, function(err) {
+		if (err) console.log(err);
 
-	res.status(200).send(STATUS);
+		// Buffering takes time
+		setTimeout(() => {
+			DEVICE.player.getStatus(function(err, stat) {
+				STATUS = stat;
+				console.log(STATUS);
+				res.status(200).send(STATUS);
+			});
+		}, 5000);
+
+	});
 });
 
 /**
@@ -47,8 +53,18 @@ app.post('/play', (req, res) => {
  * @params {Object} res - response to client
  */
 app.post('/stop', (req, res) => {
-	DEVICE.stop();
-	res.status(200).send(STATUS);
+	if (!DEVICE || typeof STATUS === 'undefined' || !STATUS) {
+		res.status(200).send(STATUS);
+		return;
+	}
+
+	DEVICE.stop(function(err) {
+		if (err) console.log(err);
+		DEVICE.player.getStatus(function(err, stat) {
+			STATUS = stat;
+			res.status(200).send(STATUS);
+		});
+	});
 });
 
 /**
@@ -58,8 +74,18 @@ app.post('/stop', (req, res) => {
  * @params {Object} res - response to client
 */
 app.post('/pause', (req, res) => {
-	DEVICE.pause();
-	res.status(200).send(STATUS);
+	if (!DEVICE || typeof STATUS === 'undefined' || !STATUS) {
+		res.status(200).send(STATUS);
+		return;
+	}
+
+	DEVICE.pause(function(err) {
+		if (err) console.log(err);
+		DEVICE.player.getStatus(function(err, stat) {
+			STATUS = stat;
+			res.status(200).send(STATUS);
+		});
+	});
 });
 
 /**
@@ -69,8 +95,13 @@ app.post('/pause', (req, res) => {
  * @params {Object} res - response to client
 */
 app.post('/resume', (req, res) => {
-	DEVICE.resume();
-	res.status(200).send(STATUS);
+	DEVICE.resume(function(err) {
+		if (err) console.log(err);
+		DEVICE.player.getStatus(function(err, stat) {
+			STATUS = stat;
+			res.status(200).send(STATUS);
+		});
+	});
 });
 
 /**
@@ -103,8 +134,13 @@ app.post('/update', (req, res) => {
  * @params {Object} res - response to client
 */
 app.post('/close', (req, res) => {
-	DEVICE.close();
-	res.status(200).send(STATUS);
+	DEVICE.close(function(err) {
+		if (err) console.log(err);
+		DEVICE.player.getStatus(function(err, stat) {
+			STATUS = stat;
+			res.status(200).send(STATUS);
+		});
+	});
 });
 
 /**
@@ -136,7 +172,6 @@ client.on('device', function (device) {
 	 */
 	DEVICE.on('connected', function(stats) {
 		STATUS = stats;
-		console.log(STATUS);
 	});
 
 /**
@@ -145,7 +180,6 @@ client.on('device', function (device) {
  */
 	DEVICE.on('status', function(stats) {
 		STATUS = stats;
-		console.log(STATUS);
 	});
 
 });
