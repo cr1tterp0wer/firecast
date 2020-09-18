@@ -8,13 +8,11 @@ const PORT = 9898;
 const server = express();
 const ChromecastAPI = require('chromecast-api');
 const client = new ChromecastAPI();
+const cors = require('cors');
 const app = express();
-app.use(function() {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	next();
-	express.json()
-});
+
+app.use(express.json());
+app.use(cors());
 
 let DEVICE;
 let STATUS;
