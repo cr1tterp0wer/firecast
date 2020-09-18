@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Firecast",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"author": "Christopher Apodaca",
 	"description": "Youtube cc support",
 	"browser_action": {

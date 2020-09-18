@@ -9,20 +9,17 @@
  * MIT License
  **/
 
-//let HOST = 'http://192.168.50.117';
 let BUFFERING = 'BUFFERING',
-    HOST = 'http://localhost',
+    HOST = 'http://192.168.50.117',
     PLAYING = 'PLAYING',
     PORT = 9898,
     REQ = {};
-
 
 resetRequestParams();
 
 /**
  * Resets the request Parameters back to their default
  **/
-
 function resetRequestParams() {
 	REQ = {
 		'url': HOST + ':' + PORT + '/',
@@ -39,7 +36,7 @@ function resetRequestParams() {
  * Issues the HTTP action request to the server
  * @param {string} method - The HTTP method
  * @param {string} action - The Chromecast Action
- * @param {string} host - The address of the server
+ * @param {string} data - The address of the media
  */
 function sendHTTP(method, action, data) {
 		REQ.method = method;
@@ -49,6 +46,12 @@ function sendHTTP(method, action, data) {
 		return $.ajax(REQ);
 }
 
+/**
+ * Resets the settings object and sets the color of the button
+ * that was clicked.
+ * @param {Object} response - The HTTP response from the server
+ * @param {jQuery.Object} action - The button clicked from UI
+ */
 function resetSettingsAndButtons(response, button) {
 	resetRequestParams();
 
